@@ -63,3 +63,170 @@ modify style.css
 	  display:-webkit-box;
 
 
+index.html
+	move ion-pane and everything inside it to new file templates/tab-trending
+
+	<ion-nav-view></ion-nav-view>
+
+templates/tab-trending.html
+    <ion-pane ng-controller="CardsCtrl">
+      <td-cards>
+        <td-card ng-repeat="card in cards"
+	on-transition-left="transitionLeft(card)"
+	on-transition-right="transitionRight(card)"
+	on-transition-out="transitionOut(card)"
+	on-destroy="cardDestroyed(card)"
+	on-swipe-left="cardSwipedLeft(card)"
+	on-swipe-right="cardSwipedRight(card)"
+	on-partial-swipe="cardPartialSwipe(amt)" on-dragend="dragged($index)" class="card-{{$index}}">
+          <div class="image"  ng-controller="CardCtrl">
+            <div class="no-text" ng-click="nope(card)">NOPE</div>
+            <img ng-src="{{card.image}}">
+            <div class="yes-text" ng-click="like(card)">LIKE</div>
+          </div>
+        </td-card>
+      </td-cards>
+    </ion-pane>
+
+
+templates/tabs.html
+	<ion-tabs class="tabs-icon-top tabs-positive">
+
+	  <!-- Dashboard Tab -->
+	  <ion-tab title="Trending" icon-off="ion-ios-pulse" icon-on="ion-ios-pulse-strong" href="#/tab/dash">
+	    <ion-nav-view name="tab-trending"></ion-nav-view>
+	  </ion-tab>
+
+	  <!-- Chats Tab -->
+	  <ion-tab title="Favorites" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/tab/favorites">
+	    <ion-nav-view name="tab-favorites"></ion-nav-view>
+	  </ion-tab>
+
+	</ion-tabs>
+
+templates/favorites
+	    <ion-pane ng-controller="FavoritesCtrl">
+      <ion-content>
+        <img collection-repeat="gif in cards"
+        item-width="200" 
+          ng-src="{{gif.image}}">
+      </ion-content>
+    </ion-pane>
+
+app.js
+	.config(function($stateProvider, $urlRouterProvider) {
+	  $stateProvider
+	    .state('tabs',
+	    {
+	      url: '/tab',
+	      abstract: true,
+	      templateUrl: 'templates/tabs.html'
+	    })
+	    .state('tabs.trending',{
+	      url: '/trending',
+	      views: {
+	        'tab-trending':{
+	          templateUrl: 'templates/tab-trending.html',
+	          controller: 'CardsCtrl'
+	        }
+	      }
+	    })
+	    .state('tabs.favorites',{
+	      url: '/favorites',
+	      views:{
+	        'tab-favorites':{
+	          templateUrl: 'templates/tab-favorites.html',
+	          controller: 'FavoritesCtrl'
+	        }
+	      }
+	    });
+	    $urlRouterProvider.otherwise('tab/trending');
+	})
+
+app.js
+	.controller('CardCtrl', function($scope, TDCardDelegate, favorites) {
+
+	  $scope.cardSwipedLeft = function(card) {
+	    console.log('LEFT SWIPE');
+	    if($scope.cards.length === 0){
+	      $scope.addCards();
+	    }
+	  };
+	  $scope.cardSwipedRight = function(card) {
+	    console.log('RIGHT SWIPE');
+	    favorites.addFavorite(card);
+	    if($scope.cards.length === 0){
+	      $scope.addCards();
+	    }
+	  };
+
+	  $scope.cardSwiped = function(index){
+	    console.log('SWIPED'+index);
+	  };
+	  $scope.transitionOut = function(card) {
+	    console.log('card transition out');
+	  };
+	   
+	  $scope.transitionRight = function(card) {
+	    console.log('card removed to the right');
+	    console.log(card); 
+	  };
+
+	  $scope.transitionLeft = function(card) {
+	    console.log('card removed to the left');
+	    console.log(card);
+	  };
+	  $scope.nope = function(card){
+	    console.log(card);
+	    if($scope.cards.length === 0){
+	      $scope.addCards();
+	    }
+	  };
+	  $scope.like = function(card){
+	    console.log(card);
+	    favorites.addFavorite(card);
+	  };
+	})
+
+services.js
+	.factory('favorites', ['$window', function($window){
+		return{
+			clearFavorites: function(){			
+				$window.localStorage['favorites'] = JSON.stringify([]);
+			},
+			addFavorite: function(value){
+				if(typeof(window.localStorage['favorites']) === 'undefined'){
+					$window.localStorage['favorites'] = JSON.stringify([]);	
+				}
+				var temp = JSON.parse($window.localStorage['favorites']);
+				temp.push(value);
+				$window.localStorage['favorites'] = JSON.stringify(temp);
+			},
+
+			getFavorites: function(){
+				return JSON.parse($window.localStorage['favorites']);
+			}
+		}
+	}]);
+
+
+
+//note these steps are only because swipe seems to currently be br0ken
+style.css
+	yes-text
+	no-text
+	  opacity: 1;
+
+app.js
+	when adding cards
+	cardTypes.push({ image: giphy.images.fixed_width.url, id: giphy.id, width: giphy.images.fixed_width.width, height:giphy.images.fixed_width.height})
+
+
+app.js
+	.controller('FavoritesCtrl', function($scope,TDCardDelegate, favorites){
+	  $scope.cards = favorites.clearFavorites();
+
+	  $scope.$on("$ionicView.enter", function(scope, states){
+	    $scope.cards = favorites.getFavorites();
+	  })
+	});
