@@ -25,8 +25,27 @@ this.search = function (q, page, cb, err) {
 };
 this.trending = function(pageOffset, cb, err){
 	$http.get('http://api.giphy.com/v1/gifs/trending' +
-                '?' + 'offset='+(pageOffset * 25) +'&'+ key)
+                '?' + 'offset='+(pageOffset * 10) + '&limit=10'+'&'+ key)
 		.success(cb)
 		.error(err);
 }
-});
+})
+.factory('favorites', ['$window', function($window){
+	return{
+		clearFavorites: function(){			
+			$window.localStorage['favorites'] = JSON.stringify([]);
+		},
+		addFavorite: function(value){
+			if(typeof(window.localStorage['favorites']) === 'undefined'){
+				$window.localStorage['favorites'] = JSON.stringify([]);	
+			}
+			var temp = JSON.parse($window.localStorage['favorites']);
+			temp.push(value);
+			$window.localStorage['favorites'] = JSON.stringify(temp);
+		},
+
+		getFavorites: function(){
+			return JSON.parse($window.localStorage['favorites']);
+		}
+	}
+}]);

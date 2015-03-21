@@ -1,15 +1,18 @@
 
     <ion-pane ng-controller="CardsCtrl">
-      <ion-header-bar class="bar-default">
-        <h1 class="title">Gifnder</h1>
-      </ion-header-bar>
-
       <td-cards>
-        <td-card ng-repeat="card in cards" on-destroy="cardDestroyed($index)" on-swipe-left="cardSwipedLeft($index)" on-swipe-right="cardSwipedRight($index)" on-partial-swipe="cardPartialSwipe(amt)" class="card-{{$index}}">
+        <td-card ng-repeat="card in cards"
+on-transition-left="transitionLeft(card)"
+on-transition-right="transitionRight(card)"
+on-transition-out="transitionOut(card)"
+on-destroy="cardDestroyed(card)"
+on-swipe-left="cardSwipedLeft(card)"
+on-swipe-right="cardSwipedRight(card)"
+on-partial-swipe="cardPartialSwipe(amt)" on-dragend="dragged($index)" class="card-{{$index}}">
           <div class="image"  ng-controller="CardCtrl">
-            <div class="no-text">NOPE</div>
+            <div class="no-text" ng-click="nope(card)">NOPE</div>
             <img ng-src="{{card.image}}">
-            <div class="yes-text">LIKE</div>
+            <div class="yes-text" ng-click="like(card)">LIKE</div>
           </div>
         </td-card>
       </td-cards>

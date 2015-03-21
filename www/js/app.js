@@ -59,7 +59,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards', 'starter.ser
     console.log(resp);
     angular.forEach(resp.data, function(giphy){
       //console.log(giphy.images.fixed_width.url + ' '+giphy.id);
-      cardTypes.push({ image: giphy.images.fixed_width.url, id: giphy.id})
+      cardTypes.push({ image: giphy.images.fixed_width.url, id: giphy.id, width: giphy.images.fixed_width.width, height:giphy.images.fixed_width.height})
     })
     $scope.cards = cardTypes;
   });
@@ -81,25 +81,57 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards', 'starter.ser
   }
 })
 
-.controller('CardCtrl', function($scope, TDCardDelegate) {
-  $scope.cardSwipedLeft = function(index) {
+.controller('CardCtrl', function($scope, TDCardDelegate, favorites) {
+
+  $scope.cardSwipedLeft = function(card) {
     console.log('LEFT SWIPE');
     if($scope.cards.length === 0){
       $scope.addCards();
     }
   };
-  $scope.cardSwipedRight = function(index) {
+  $scope.cardSwipedRight = function(card) {
     console.log('RIGHT SWIPE');
-    console.log(index);
-    if(typeof($scope.favorites) === 'undefined'){
-      $scope.favorites = [];
-    }
-    $scope.favorites.push()
+    favorites.addFavorite(card);
     if($scope.cards.length === 0){
       $scope.addCards();
     }
   };
-})
-.controller('FavoritesCtrl', function($scope){
 
+  $scope.cardSwiped = function(index){
+    console.log('SWIPED'+index);
+  };
+  $scope.transitionOut = function(card) {
+    console.log('card transition out');
+  };
+   
+  $scope.transitionRight = function(card) {
+    console.log('card removed to the right');
+    console.log(card); 
+  };
+
+  $scope.transitionLeft = function(card) {
+    console.log('card removed to the left');
+    console.log(card);
+  };
+  $scope.nope = function(card){
+    console.log(card);
+    if($scope.cards.length === 0){
+      $scope.addCards();
+    }
+  };
+  $scope.like = function(card){
+    console.log(card);
+    favorites.addFavorite(card);
+  };
+})
+.controller('FavoritesCtrl', function($scope,TDCardDelegate, favorites){
+  $scope.cards = favorites.clearFavorites();
+
+  $scope.refresh = function(){
+    $scope.cards = favorites.getFavorites();
+    console.log('favorites'+$scope.cards.length);
+  };
+  $scope.$on("$ionicView.enter", function(scope, states){
+    $scope.cards = favorites.getFavorites();
+  })
 });
