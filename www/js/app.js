@@ -9,7 +9,32 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards', 'starter.ser
 
 
 .config(function($stateProvider, $urlRouterProvider) {
-
+  $stateProvider
+    .state('tabs',
+    {
+      url: '/tab',
+      abstract: true,
+      templateUrl: 'templates/tabs.html'
+    })
+    .state('tabs.trending',{
+      url: '/trending',
+      views: {
+        'tab-trending':{
+          templateUrl: 'templates/tab-trending.html',
+          controller: 'CardsCtrl'
+        }
+      }
+    })
+    .state('tabs.favorites',{
+      url: '/favorites',
+      views:{
+        'tab-favorites':{
+          templateUrl: 'templates/tab-favorites.html',
+          controller: 'FavoritesCtrl'
+        }
+      }
+    });
+    $urlRouterProvider.otherwise('tab/trending');
 })
 
 .directive('noScroll', function($document) {
@@ -65,8 +90,16 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards', 'starter.ser
   };
   $scope.cardSwipedRight = function(index) {
     console.log('RIGHT SWIPE');
+    console.log(index);
+    if(typeof($scope.favorites) === 'undefined'){
+      $scope.favorites = [];
+    }
+    $scope.favorites.push()
     if($scope.cards.length === 0){
       $scope.addCards();
     }
   };
+})
+.controller('FavoritesCtrl', function($scope){
+
 });
