@@ -127,10 +127,6 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards', 'starter.ser
 .controller('FavoritesCtrl', function($scope,TDCardDelegate, favorites){
   $scope.cards = favorites.clearFavorites();
 
-  $scope.refresh = function(){
-    $scope.cards = favorites.getFavorites();
-    console.log('favorites'+$scope.cards.length);
-  };
   $scope.$on("$ionicView.enter", function(scope, states){
     $scope.cards = favorites.getFavorites();
   })
