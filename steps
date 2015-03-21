@@ -1,0 +1,65 @@
+ionic start gifnder http://codepen.io/ionic/pen/nxEdH
+
+create services.js
+	'use strict';
+
+	angular.module('starter.services', [])
+	.service('giphyService', function gifs($http) {
+
+	// config
+	var key = 'api_key=dc6zaTOxFJmzC';
+
+	this.trending = function(pageOffset, cb, err){
+		$http.get('http://api.giphy.com/v1/gifs/trending' +
+	                '?' + 'offset='+(pageOffset * 25) +'&'+ key)
+			.success(cb)
+			.error(err);
+	}
+	});
+
+link in index.html
+
+add dependency to  'starter.services' to app.js
+
+modify app.js
+
+	.controller('CardsCtrl', function($scope, TDCardDelegate, giphyService) {
+	  var cardTypes = [];
+	  var refreshes = 0;
+
+	  giphyService.trending(refreshes, function(resp){
+	    console.log(resp);
+	    angular.forEach(resp.data, function(giphy){
+	      //console.log(giphy.images.fixed_width.url + ' '+giphy.id);
+	      cardTypes.push({ image: giphy.images.fixed_width.url, id: giphy.id})
+	    })
+	    $scope.cards = cardTypes;
+	  });
+
+    $scope.addCards = function() {
+	    refreshes++;
+	    giphyService.trending(refreshes, function(resp){
+	      console.log(resp);
+	      angular.forEach(resp.data, function(giphy){
+	        //console.log(giphy.images.fixed_width.url + ' '+giphy.id);
+	        cardTypes.push({ image: giphy.images.fixed_width.url, id: giphy.id})
+	      })
+	      $scope.cards = cardTypes;
+	    });
+  	}
+
+
+
+    if($scope.cards.length === 0){
+      $scope.addCards();
+    }
+
+modify style.css
+	td-card 
+	  background: #fff;
+
+	  -webkit-box-align:center;
+	  -webkit-box-pack:center;
+	  display:-webkit-box;
+
+
