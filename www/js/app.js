@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
+angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards', 'starter.services'])
 
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -25,15 +25,33 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
   }
 })
 
-.controller('CardsCtrl', function($scope, TDCardDelegate) {
+.controller('CardsCtrl', function($scope, TDCardDelegate, giphyService) {
   console.log('CARDS CTRL');
-  var cardTypes = [
-    { image: 'https://pbs.twimg.com/profile_images/546942133496995840/k7JAxvgq.jpeg' },
-    { image: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png' },
-    { image: 'https://pbs.twimg.com/profile_images/491995398135767040/ie2Z_V6e.jpeg' },
-  ];
+  // var cardTypes = [
+  //   { image: 'https://pbs.twimg.com/profile_images/546942133496995840/k7JAxvgq.jpeg' },
+  //   { image: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png' },
+  //   { image: 'https://pbs.twimg.com/profile_images/491995398135767040/ie2Z_V6e.jpeg' },
+  // ];
+  var cardTypes = [];
+  var _this = this;
+  giphyService.trending(0, function(resp){
+    console.log(resp);
+    angular.forEach(resp.data, function(giphy){
+      //console.log(giphy.images.fixed_width.url + ' '+giphy.id);
+      cardTypes.push({ image: giphy.images.fixed_width.url, id: giphy.id})
+    })
+    $scope.cards = cardTypes;
+  });
+  // giphyService.getGifs().then(function(resp){
+  //   console.log(resp);
+  //   angular.forEach(resp.data.data, function(giphy){
+  //     //console.log(giphy.images.fixed_width.url + ' '+giphy.id);
+  //     cardTypes.push({ image: giphy.images.fixed_width.url, id: giphy.id})
+  //   })
+  //   $scope.cards = cardTypes;
+  // })
 
-  $scope.cards = Array.prototype.slice.call(cardTypes, 0);
+ // $scope.cards = Array.prototype.slice.call(cardTypes, 0);
 
   $scope.cardDestroyed = function(index) {
     $scope.cards.splice(index, 1);
