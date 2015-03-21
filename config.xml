@@ -2,10 +2,10 @@
 <widget id="com.ionicframework.gifnder136308" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>gifnder</name>
   <description>
-        An Ionic Framework and Cordova project.
+      A Hastely written demo using giphy, tinder cards, a service, a factory, and navigation/routing
     </description>
-  <author email="hi@ionicframework" href="http://ionicframework.com/">
-      Ionic Framework Team
+  <author email="dhoman@huskers.unl.edu" href="http://dhoman.com/">
+      Derek Homan
     </author>
   <content src="index.html"/>
   <access origin="*"/>

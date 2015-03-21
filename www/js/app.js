@@ -78,11 +78,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards', 'starter.ser
       })
       $scope.cards = cardTypes;
     });
-  }
-})
-
-.controller('CardCtrl', function($scope, TDCardDelegate, favorites) {
-
+  };
   $scope.cardSwipedLeft = function(card) {
     console.log('LEFT SWIPE');
     if($scope.cards.length === 0){
@@ -113,6 +109,10 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards', 'starter.ser
     console.log('card removed to the left');
     console.log(card);
   };
+})
+
+.controller('CardCtrl', function($scope, TDCardDelegate, favorites) {
+
   $scope.nope = function(card){
     console.log(card);
     if($scope.cards.length === 0){
